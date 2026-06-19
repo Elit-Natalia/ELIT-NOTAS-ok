@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELIT · Reportes de notas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Yellowtail&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16294a;
+    --teal-deep:#1d4f5c;
+    --teal:#2f8f86;
+    --teal-light:#6fd9c8;
+    --indigo:#241c4a;
+    --purple:#6a5acd;
+    --slate:#3f6b7a;
+    --ink:#1c2a38;
+    --ink-soft:#5b6b76;
+    --ink-faint:#8a96a0;
+    --bg:#f5f9f9;
+    --card:#ffffff;
+    --line:rgba(20,40,60,.09);
+    --gold:#c89b3c;
+    --gold-dark:#8a6516;
+    --coral:#e0556b;
+    --coral-dark:#c23652;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  button{font-family:inherit;}
+  ::selection{background:var(--teal);color:#fff;}
+
+  /* ---------- header ---------- */
+  header.app-header{
+    background:
+      radial-gradient(at 80% 0%, rgba(106,90,205,.5) 0%, transparent 45%),
+      radial-gradient(at 42% 65%, rgba(111,217,200,.55) 0%, transparent 55%),
+      linear-gradient(160deg, var(--navy) 0%, var(--teal-deep) 42%, var(--teal) 68%, var(--indigo) 100%);
+    padding:28px 32px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .brand-row{display:flex;align-items:center;gap:14px;}
+  .logo-badge{
+    width:52px;height:52px;border-radius:50%;
+    background:#111;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Yellowtail',cursive;
+    font-size:1.55rem;
+    color:#fff;
+    padding-bottom:3px;
+    box-shadow:0 6px 16px rgba(0,0,0,.45);
+    flex-shrink:0;
+  }
+  .brand-text{display:flex;flex-direction:column;}
+  .brand-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.25rem;color:#fff;letter-spacing:.01em;line-height:1.1;}
+  .brand-sub{font-family:'Inter',sans-serif;font-weight:500;font-size:.76rem;color:rgba(255,255,255,.82);margin-top:2px;}
+
+  .eyebrow{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:.66rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.6);
+    margin-top:18px;
+  }
+  .journey{
+    display:flex;
+    align-items:center;
+    margin-top:16px;
+    max-width:420px;
+  }
+  .journey .seg{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+    cursor:pointer;
+  }
+  .journey .seg:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top:6px;
+    left:50%;
+    width:100%;
+    height:1px;
+    background:rgba(255,255,255,.25);
+    z-index:0;
+  }
+  .journey .pip{
+    width:13px;height:13px;border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.45);
+    background:transparent;
+    z-index:1;
+    transition:transform .15s ease;
+  }
+  .journey .seg:hover .pip{transform:scale(1.15);}
+  .journey .seg.active .pip{
+    background:#fff;
+    border-color:#fff;
+    box-shadow:0 0 0 4px rgba(255,255,255,.22),0 0 12px rgba(111,217,200,.85);
+  }
+  .journey .seg.locked{cursor:not-allowed;opacity:.55;}
+  .journey .seg.locked .pip{background:transparent;}
+  .journey .seg.locked:hover .pip{transform:none;}
+  .journey label{
+    margin-top:7px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:.6rem;
+    letter-spacing:.05em;
+    color:rgba(255,255,255,.55);
+  }
+  .journey .seg.active label{color:#fff;}
+
+  /* ---------- layout ---------- */
+  main{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    min-height:calc(100vh - 132px);
+  }
+  aside.sidebar{
+    background:var(--card);
+    border-right:1px solid var(--line);
+    padding:20px 18px 18px;
+    display:flex;
+    flex-direction:column;
+  }
+  .search-wrap{position:relative;margin-bottom:14px;}
+  .search-wrap input{
+    width:100%;
+    background:transparent;
+    border:none;
+    border-bottom:1.5px solid var(--line);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:.92rem;
+    padding:8px 4px 9px 26px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  .search-wrap input::placeholder{color:var(--ink-faint);}
+  .search-wrap input:focus{border-color:var(--teal);}
+  .search-wrap svg{
+    position:absolute;left:2px;top:9px;
+    width:16px;height:16px;
+    stroke:var(--ink-faint);
+  }
+  .count-tag{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:.7rem;
+    color:var(--ink-faint);
+    letter-spacing:.03em;
+    margin-bottom:10px;
+  }
+  ul.student-list{
+    list-style:none;margin:0;padding:0;
+    overflow-y:auto;
+    flex:1;
+  }
+  ul.student-list li{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 10px;
+    border-radius:10px;
+    border-left:3px solid transparent;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  ul.student-list li:hover{background:rgba(47,143,134,.06);}
+  ul.student-list li.selected{
+    background:rgba(47,143,134,.1);
+    border-left-color:var(--teal);
+  }
+  .li-left{display:flex;align-items:center;gap:10px;min-width:0;}
+  .avatar{
+    width:32px;height:32px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:.66rem;
+    background:linear-gradient(135deg,var(--teal),var(--purple));
+  }
+  ul.student-list li .nm{font-size:.88rem;min-width:0;}
+  ul.student-list li .nm .ap{color:var(--ink-faint);font-size:.78rem;display:block;}
+  .badge{
+    font-family:'Inter',sans-serif;
+    font-size:.72rem;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:20px;
+    flex-shrink:0;
+  }
+  .badge.verde{background:rgba(47,143,134,.14);color:#1f7d6e;}
+  .badge.ambar{background:rgba(200,155,60,.16);color:var(--gold-dark);}
+  .badge.rojo{background:rgba(224,85,107,.15);color:var(--coral-dark);}
+  .badge.pendiente{background:rgba(20,40,60,.06);color:var(--ink-faint);}
+  li:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--teal);outline-offset:2px;
+  }
+
+  .empty-list-msg{
+    color:var(--ink-faint);
+    font-size:.82rem;
+    padding:14px 6px;
+  }
+
+  /* ---------- detail panel ---------- */
+  section.detail{
+    padding:34px 40px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .placeholder{
+    margin-top:14vh;
+    text-align:center;
+    color:var(--ink-faint);
+    max-width:340px;
+  }
+  .placeholder svg{width:42px;height:42px;stroke:var(--ink-faint);margin-bottom:14px;}
+  .placeholder p{font-size:.92rem;line-height:1.5;}
+
+  .report-card{
+    width:100%;
+    max-width:560px;
+    background:var(--card);
+    border-radius:18px;
+    box-shadow:0 20px 50px rgba(20,40,60,.14);
+    padding:34px 32px 28px;
+    position:relative;
+    overflow:hidden;
+    animation:cardIn .35s ease;
+  }
+  .report-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--teal),var(--purple));
+  }
+  @keyframes cardIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:4px;}
+  .card-eyebrow{
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:.68rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--teal);
+  }
+  .card-name{
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
+    font-size:1.5rem;
+    line-height:1.2;
+    margin-top:4px;
+    color:var(--ink);
+  }
+  .card-name .ap{display:block;font-size:1rem;font-weight:500;color:var(--ink-soft);font-family:'Poppins',sans-serif;}
+
+  .stamp-wrap{
+    width:90px;height:90px;flex-shrink:0;border-radius:50%;
+    animation:stampIn .4s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes stampIn{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
+  .stamp-ring{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .stamp-inner{width:70%;height:70%;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .stamp-inner .num{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.35rem;color:var(--ink);line-height:1;}
+  .stamp-inner .lbl{font-family:'Inter',sans-serif;font-weight:600;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-top:2px;}
+
+  .status-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;border-radius:20px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:.74rem;
+    margin:10px 0 18px;
+  }
+  .status-pill .dot{width:6px;height:6px;border-radius:50%;}
+  .status-pill.verde{background:rgba(47,143,134,.12);color:#1f7d6e;}
+  .status-pill.verde .dot{background:var(--teal);}
+  .status-pill.ambar{background:rgba(200,155,60,.14);color:var(--gold-dark);}
+  .status-pill.ambar .dot{background:var(--gold);}
+  .status-pill.rojo{background:rgba(224,85,107,.13);color:var(--coral-dark);}
+  .status-pill.rojo .dot{background:var(--coral);}
+  .status-pill.pendiente{background:rgba(20,40,60,.06);color:var(--ink-faint);}
+  .status-pill.pendiente .dot{background:var(--ink-faint);}
+
+  .subjects{margin-top:8px;}
+  .subject-row{display:flex;align-items:center;gap:12px;padding:7px 0;}
+  .subject-row .name{flex:0 0 42%;font-family:'Inter',sans-serif;font-size:.8rem;color:var(--ink);line-height:1.25;}
+  .subject-row .bar-track{flex:1;height:6px;border-radius:4px;background:rgba(20,40,60,.07);overflow:hidden;}
+  .subject-row .bar-fill{height:100%;border-radius:4px;}
+  .subject-row .bar-fill.verde{background:var(--teal);}
+  .subject-row .bar-fill.ambar{background:var(--gold);}
+  .subject-row .bar-fill.rojo{background:var(--coral);}
+  .subject-row .grade{flex:0 0 38px;text-align:right;font-family:'Poppins',sans-serif;font-weight:700;font-size:.82rem;}
+  .subject-row .grade.verde{color:#1f7d6e;}
+  .subject-row .grade.ambar{color:var(--gold-dark);}
+  .subject-row .grade.rojo{color:var(--coral-dark);}
+  .subject-row .pendiente-label{flex:1;font-style:italic;font-size:.76rem;color:var(--ink-faint);}
+
+  .obs{
+    margin-top:16px;
+    padding:10px 12px;
+    background:rgba(47,143,134,.06);
+    border-left:2px solid var(--teal);
+    border-radius:0 6px 6px 0;
+    font-size:.85rem;
+    line-height:1.45;
+  }
+  .obs b{display:block;font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:3px;}
+
+  .actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+  .btn{
+    border:none;border-radius:8px;
+    padding:11px 16px;
+    font-size:.86rem;font-weight:700;
+    cursor:pointer;
+    display:flex;align-items:center;gap:8px;
+    transition:transform .1s ease, opacity .15s ease, filter .15s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:linear-gradient(135deg,var(--teal),var(--purple));color:#fff;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+  .btn svg{width:16px;height:16px;}
+
+  .hint{
+    margin-top:10px;
+    font-size:.72rem;
+    color:var(--ink-faint);
+    line-height:1.4;
+  }
+
+  /* mobile back button (hidden on desktop) */
+  .back-btn{display:none;}
+
+  .toast{
+    position:fixed;
+    bottom:24px;left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:#fff;
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:.84rem;
+    font-weight:600;
+    box-shadow:0 10px 24px rgba(0,0,0,.25);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:50;
+    font-family:'Inter',sans-serif;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  footer.app-footer{
+    text-align:center;
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size:.7rem;
+    letter-spacing:.02em;
+    color:var(--ink-faint);
+    padding:14px;
+    border-top:1px solid var(--line);
+    background:var(--card);
+  }
+
+  @media (max-width:780px){
+    main{grid-template-columns:1fr;}
+    aside.sidebar{
+      border-right:none;
+      border-bottom:1px solid var(--line);
+      max-height:60vh;
+    }
+    body.detail-open aside.sidebar{display:none;}
+    body.detail-open section.detail{padding-top:18px;}
+    .back-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      background:none;border:none;color:var(--ink-faint);
+      font-size:.82rem;margin-bottom:14px;cursor:pointer;
+      font-family:'Inter',sans-serif;font-weight:600;
+    }
+    body.detail-open .back-btn{display:inline-flex;}
+    .placeholder{margin-top:6vh;}
+    .subject-row .name{flex:0 0 34%;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .report-card, .stamp-wrap{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <div class="logo-badge">elit</div>
+    <div class="brand-text">
+      <div class="brand-name">ELIT</div>
+      <div class="brand-sub">Escuela de Liderazgo Transformacional</div>
+    </div>
+  </div>
+  <div class="eyebrow">Reporte de notas · uso privado del profesor</div>
+  <nav class="journey" id="journey"></nav>
+</header>
+
+<main>
+  <aside class="sidebar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" type="text" placeholder="Buscar estudiante…" autocomplete="off">
+    </div>
+    <div class="count-tag" id="countTag"></div>
+    <ul class="student-list" id="studentList"></ul>
+  </aside>
+
+  <section class="detail" id="detail"></section>
+</main>
+
+<footer class="app-footer">
+  Datos · NOTAS 2025-2 — el mensaje de WhatsApp solo incluye las notas del estudiante seleccionado.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- datos: materias por módulo ---------------- */
+const SUBJECTS_1 = [
+  "Carácter de Cristo",
+  "Fundamentos de la Fe",
+  "Espíritu, Alma y Cuerpo",
+  "Autoridad del Creyente",
+  "Justicia",
+  "Espíritu Santo",
+  "Oración Transformadora",
+  "Fundamentos de Oración",
+  "Fundamentos del Reino"
+];
+
+const SUBJECTS_2 = [
+  "Bases Bíblicas de Admin.",
+  "Adoración Transf.",
+  "Fundamentos de Liderazgo",
+  "Prioridades y Mayordomía",
+  "Ingeniería Humana",
+  "Instinto, Visión, Propósito, Destino",
+  "Principios de Sanidad"
+];
+
+const PERIOD = "2025-2";
+
+// g: notas en el mismo orden que las materias del módulo (null = pendiente). p: promedio. o: observaciones.
+const STUDENTS_RAW_1 = [
+  {n:"Diana Patricia",   a:"Ramírez",             g:[90,94,100,98,100,100,95,97,100], p:97, o:""},
+  {n:"Nadia Itzel",      a:"Gutiérrez Garcia",    g:[90,93,94,97,99,100,87,100,95],   p:95, o:""},
+  {n:"Helena María",     a:"Jiménez González",    g:[83,92,100,100,95,91,100,93,95],  p:94, o:""},
+  {n:"Karina Aileen",    a:"Aragón Gamero",       g:[93,98,100,93,97,82,100,81,100],  p:94, o:""},
+  {n:"Fabian",           a:"López",               g:[90,89,95,100,98,82,100,82,100],  p:93, o:""},
+  {n:"Francesca",        a:"D´María Rey",         g:[90,94,95,100,99,84,92,87,95],    p:93, o:""},
+  {n:"Valeria",          a:"Vergara Noguera",     g:[83,90,96,93,98,81,91,93,100],    p:92, o:""},
+  {n:"Juliana",          a:"Florez",              g:[93,84,89,97,93,89,92,84,95],     p:91, o:""},
+  {n:"Erika",            a:"Jurado",              g:[86,89,95,97,95,67,92,83,100],    p:89, o:""},
+  {n:"Carolina",         a:"Rozo Rios",           g:[90,92,95,94,91,80,82,88,90],     p:89, o:""},
+  {n:"Monica",           a:"Hernandez Mendez",    g:[86,86,81,100,93,81,87,93,95],    p:89, o:""},
+  {n:"Abi",              a:"Vergara Rodríguez",   g:[93,86,89,94,94,61,92,81,100],    p:88, o:""},
+  {n:"Nathaly",          a:"Delgadillo",          g:[83,93,70,93,97,85,85,88,95],     p:88, o:""},
+  {n:"Sebastián",        a:"Briceño Castaño",     g:[93,92,91,93,88,63,89,65,99],     p:86, o:""},
+  {n:"Heber Abdiel",     a:"Ramos Ramírez",       g:[90,83,90,97,90,83,95,89,50],     p:85, o:""},
+  {n:"Sofia",            a:"Copete",              g:[83,79,81,90,93,70,83,82,95],     p:84, o:""},
+  {n:"José Roberto",     a:"Sanabria nieto",      g:[83,71,100,70,93,60,91,80,95],    p:83, o:""},
+  {n:"Danny",            a:"Deaza",               g:[83,79,80,87,91,74,89,73,85],     p:82, o:""},
+  {n:"Ma. Azucena",      a:"Baños Rangel",        g:[86,60,99,70,90,67,87,82,99],     p:82, o:""},
+  {n:"Luz America",      a:"Hernandez Camacho",   g:[77,78,82,93,91,64,79,73,93],     p:81, o:""},
+  {n:"Ernesto",          a:"García Amaro",        g:[83,78,79,70,92,60,88,80,98],     p:81, o:""},
+  {n:"Guillermo",        a:"Ramírez Graciano",    g:[90,12,90,72,95,94,85,86,87],     p:79, o:""},
+  {n:"Daniel Camilo",    a:"Cadena Suárez",       g:[79,89,94,73,93,60,100,72,26],    p:76, o:""},
+  {n:"Zurisaday Idaeth", a:"Hernandez Gonzalez",  g:[87,13,86,100,30,78,92,88,100],   p:75, o:""},
+  {n:"Daniel",           a:"Copete",              g:[90,75,96,60,96,71,0,83,95],      p:74, o:""},
+  {n:"Josue Uziel",      a:"Gonzalez Hernandez",  g:[86,13,69,97,29,84,90,93,98],     p:73, o:""},
+  {n:"Imelda",           a:"Castañeda",           g:[76,12,89,94,93,66,83,60,78],     p:72, o:""},
+  {n:"Saul",             a:"Olvera",              g:[79,36,76,92,19,64,83,93,95],     p:71, o:""},
+  {n:"Natalia",          a:"Sanchez",             g:[null,92,null,null,null,null,null,40,null], p:66, o:""},
+  {n:"Esteban",          a:"Hernandez",           g:[90,90,100,0,100,0,0,0,0],        p:42, o:""},
+  {n:"Sebastian",        a:"Gacha",               g:[86,80,100,0,100,0,0,0,0],        p:41, o:""},
+  {n:"Samuel David",     a:"Arias Jaramillo",     g:[87,96,15,0,98,0,0,0,0],          p:33, o:""},
+  {n:"Esteban",          a:"Santana",             g:[0,85,89,0,98,0,0,0,0],           p:30, o:""},
+  {n:"Juan Felipe",      a:"Bedoya",              g:[30,70,85,0,78,0,0,0,0],          p:29, o:""},
+  {n:"Marlene Rosario",  a:"Guevara Mujica",      g:[0,75,90,0,94,0,0,0,0],           p:29, o:""},
+  {n:"María Ximena",     a:"Pachón",              g:[0,86,50,0,100,0,0,0,0],          p:26, o:""},
+  {n:"María Fernanda",   a:"Sosa Pachón",         g:[0,70,50,0,93,0,0,0,0],           p:24, o:""},
+  {n:"Miguel",           a:"Orjuela",             g:[0,88,0,0,81,0,0,0,0],            p:19, o:""},
+  {n:"Bryan",            a:"Carmona Mendez",      g:[0,0,0,0,30,0,0,0,0],             p:3,  o:""},
+  {n:"Sara",             a:"Vivar Casañas",       g:[0,12,0,0,0,0,0,0,0],             p:1,  o:""},
+  {n:"Daniel Arturo",    a:"Silva Álvarez",       g:[0,0,0,0,10,0,0,0,0],             p:1,  o:""},
+  {n:"Esperanza",        a:"González Rodríguez",  g:[0,0,0,0,10,0,0,0,0],             p:1,  o:""},
+  {n:"Jonatan Uriel",    a:"Flores Gonzalez",     g:[0,0,0,0,10,0,0,0,0],             p:1,  o:""},
+  {n:"Eliseo",           a:"Castellanos",         g:[0,0,0,0,0,0,0,0,0],              p:0,  o:""},
+  {n:"José Luis",        a:"Flores Barrera",      g:[0,0,0,0,0,0,0,0,0],              p:0,  o:""},
+  {n:"Remedios",         a:"González Rodriguez",  g:[0,0,0,0,0,0,0,0,0],              p:0,  o:""}
+];
+
+const STUDENTS_RAW_2 = [
+  {n:"Daniela Marianne", a:"González Rosada", g:[100,94,87,93,93,100,96], p:95, o:""},
+  {n:"María Antonia", a:"Galindo", g:[83,98,90,100,94,100,98], p:95, o:""},
+  {n:"María Fernanda", a:"Morales del Rio", g:[93,100,90,85,94,100,96], p:94, o:""},
+  {n:"Mónica", a:"Prada", g:[93,98,80,100,94,95,94], p:93, o:""},
+  {n:"Keila", a:"Sarmiento", g:[93,97,75,100,99,95,93], p:93, o:""},
+  {n:"John", a:"Salamanca", g:[96,90,75,100,90,90,89], p:90, o:""},
+  {n:"Alejandra", a:"Rodríguez", g:[99,88,76,93,91,90,88], p:89, o:""},
+  {n:"Camilo", a:"Rubio", g:[93,87,73,93,94,90,88], p:88, o:""},
+  {n:"Johana", a:"Niño Gaitán", g:[93,94,0,100,82,90,77], p:77, o:""},
+  {n:"Didier", a:"Castro Castro", g:[100,92,0,80,78,95,77], p:75, o:""},
+  {n:"Daniela", a:"Serrano", g:[56,0,0,0,0,0,0], p:8, o:""},
+  {n:"Juan Manuel", a:"Orjuela", g:[12,0,0,0,0,0,0], p:2, o:""},
+  {n:"Kirsty Valerie", a:"Bernal", g:[0,0,0,0,0,0,0], p:0, o:""}
+];
+
+const SUBJECTS_3 = [
+  "Reforma y Transformación",
+  "Modelos de Dios para la T.ción de N.",
+  "Proyectos de Grado I",
+  "El Reino de Dios en la Reforma",
+  "Cosmovisión Bíblica",
+  "Liderazgo de Servicio",
+  "Integridad y Compromiso del Líder",
+  "Liderazgo Emocional",
+  "Liderazgo Transf."
+];
+
+const SUBJECTS_4 = [
+  "Modelos para Discipular una Nación",
+  "Proyecto de Grado II",
+  "Apologética",
+  "El Carácter de Dios para las 7 Montes",
+  "Avivamiento Hoy",
+  "Evangelismo",
+  "Hermenéutica",
+  "Apocalipsis"
+];
+
+const STUDENTS_RAW_3 = [
+  {n:"María José",    a:"Ospina",             g:[93,83,100,94,100,99,100,93,97], p:95, o:""},
+  {n:"Margoth",       a:"Correa Nieto",       g:[80,87,100,97,100,99,100,96,97], p:95, o:""},
+  {n:"Mariana",       a:"Quezada",            g:[93,92,100,91,100,94,86,97,100], p:95, o:""},
+  {n:"Laura Melissa", a:"Cuadros",            g:[92,96,100,97,100,88,80,93,100], p:94, o:""},
+  {n:"Paola Andrea",  a:"Baquero Rodriguez",  g:[90,94,100,94,94,90,93,90,97],  p:94, o:""},
+  {n:"Ana Sofia",     a:"Cuervo Barrera",     g:[82,90,100,89,100,94,92,93,89], p:92, o:""},
+  {n:"Liliana",       a:"Agudelo",            g:[75,83,100,88,100,90,100,88,97], p:91, o:""},
+  {n:"Jaqueline",     a:"Ortega",             g:[80,93,100,100,94,88,86,79,94], p:90, o:""},
+  {n:"Marlon",        a:"Gutierrez",          g:[85,60,100,94,94,81,90,60,97],  p:85, o:""},
+  {n:"Angie Lorena",  a:"Ramos",              g:[82,94,25,100,94,90,93,93,88],  p:84, o:""}
+];
+
+const STUDENTS_RAW_4 = [
+  {n:"Sandra",      a:"Estrada",          g:[94,100,100,100,87,100,100,96], p:97, o:""},
+  {n:"Amira Maria", a:"Contreras Tovar",  g:[72,100,100,96,86,98,100,98],  p:94, o:""},
+  {n:"Jefferson",   a:"Ramirez",          g:[100,0,90,74,94,100,80,100],   p:80, o:""}
+];
+
+const MODULES_META = [
+  {id:1, label:"M1", full:"Módulo 1", subjects:SUBJECTS_1, raw:STUDENTS_RAW_1},
+  {id:2, label:"M2", full:"Módulo 2", subjects:SUBJECTS_2, raw:STUDENTS_RAW_2},
+  {id:3, label:"M3", full:"Módulo 3", subjects:SUBJECTS_3, raw:STUDENTS_RAW_3},
+  {id:4, label:"M4", full:"Módulo 4", subjects:SUBJECTS_4, raw:STUDENTS_RAW_4}
+];
+
+const STATUS_COLOR = { verde:"#2f8f86", ambar:"#c89b3c", rojo:"#e0556b", pendiente:"#b9c2c8" };
+
+/* ---------------- utilidades ---------------- */
+function cap(s){
+  return s.replace(/\p{L}+/gu, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
+function band(n){
+  if(n === null || n === undefined) return 'pendiente';
+  if(n >= 85) return 'verde';
+  if(n >= 70) return 'ambar';
+  return 'rojo';
+}
+function statusLabel(p){
+  if(p === null) return {cls:'pendiente', label:'Sin datos'};
+  if(p >= 85) return {cls:'verde', label:'Sobresaliente'};
+  if(p >= 70) return {cls:'ambar', label:'Aprobado'};
+  if(p >= 40) return {cls:'rojo', label:'En proceso'};
+  return {cls:'rojo', label:'Necesita atención'};
+}
+function initials(s){
+  const f1 = s.n.trim().charAt(0);
+  const f2 = s.a.trim().charAt(0);
+  return (f1 + f2).toUpperCase();
+}
+
+/* prepara estudiantes (id + orden alfabético) para cada módulo que tenga datos */
+MODULES_META.forEach(m => {
+  if(m.raw){
+    m.students = m.raw
+      .map((s, i) => ({...s, id:i, fullName: cap(s.n) + ' ' + cap(s.a)}))
+      .sort((a,b) => a.fullName.localeCompare(b.fullName, 'es', {sensitivity:'base'}));
+  } else {
+    m.students = null;
+  }
+});
+
+let activeModule = 1;
+let selectedId = null;
+
+function getActiveMeta(){
+  return MODULES_META.find(m => m.id === activeModule);
+}
+
+/* ---------------- render: journey ---------------- */
+function renderJourney(){
+  const wrap = document.getElementById('journey');
+  wrap.innerHTML = MODULES_META.map(m => `
+    <div class="seg ${m.id === activeModule ? 'active':''} ${!m.students ? 'locked':''}" data-id="${m.id}" title="${m.full}${m.students ? '' : ' · aún sin datos'}">
+      <div class="pip"></div>
+      <label>${m.label}</label>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.seg').forEach(el => {
+    const id = Number(el.dataset.id);
+    const meta = MODULES_META.find(x => x.id === id);
+    el.addEventListener('click', () => {
+      if(meta.students){
+        switchModule(id);
+      } else {
+        showToast('Aún no hay datos cargados para ' + meta.full + '.');
+      }
+    });
+  });
+}
+
+function switchModule(id){
+  if(id === activeModule) return;
+  activeModule = id;
+  selectedId = null;
+  document.body.classList.remove('detail-open');
+  document.getElementById('searchInput').value = '';
+  renderJourney();
+  renderList();
+  renderPlaceholder();
+}
+
+/* ---------------- render: lista ---------------- */
+function renderList(filter=''){
+  const ul = document.getElementById('studentList');
+  const meta = getActiveMeta();
+  const f = filter.trim().toLowerCase();
+  const visible = meta.students.filter(s => s.fullName.toLowerCase().includes(f));
+  document.getElementById('countTag').textContent = visible.length + ' de ' + meta.students.length + ' estudiantes';
+
+  if(visible.length === 0){
+    ul.innerHTML = '<li class="empty-list-msg">Sin resultados para esa búsqueda.</li>';
+    return;
+  }
+
+  ul.innerHTML = visible.map(s => {
+    const st = statusLabel(s.p);
+    return `
+      <li data-id="${s.id}" class="${s.id === selectedId ? 'selected':''}" tabindex="0" role="button">
+        <div class="li-left">
+          <div class="avatar">${initials(s)}</div>
+          <span class="nm">${cap(s.n)}<span class="ap">${cap(s.a)}</span></span>
+        </div>
+        <span class="badge ${st.cls}">${s.p === null ? '—' : s.p}</span>
+      </li>`;
+  }).join('');
+
+  ul.querySelectorAll('li[data-id]').forEach(li => {
+    li.addEventListener('click', () => selectStudent(Number(li.dataset.id)));
+    li.addEventListener('keydown', e => { if(e.key === 'Enter') selectStudent(Number(li.dataset.id)); });
+  });
+}
+
+/* ---------------- render: placeholder / detalle ---------------- */
+function renderPlaceholder(){
+  document.getElementById('detail').innerHTML = `
+    <div class="placeholder" id="placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 19.5V6a2 2 0 0 1 2-2h13.5v15.5"/><path d="M6 22a2 2 0 0 1-2-2.5A2 2 0 0 1 6 17.5h13.5V22Z"/></svg>
+      <p>Elige un nombre de la lista para ver el reporte de ${getActiveMeta().full}.</p>
+    </div>`;
+}
+
+function selectStudent(id){
+  selectedId = id;
+  document.body.classList.add('detail-open');
+  renderList(document.getElementById('searchInput').value);
+  renderDetail();
+}
+
+function renderDetail(){
+  const detail = document.getElementById('detail');
+  const meta = getActiveMeta();
+  const s = meta.students.find(x => x.id === selectedId);
+  if(!s){ return; }
+  const st = statusLabel(s.p);
+  const ringColor = STATUS_COLOR[st.cls];
+  const pct = Math.max(0, Math.min(100, s.p));
+
+  const subjectsHtml = meta.subjects.map((name, i) => {
+    const g = s.g[i];
+    if(g === null){
+      return `
+        <div class="subject-row">
+          <span class="name">${name}</span>
+          <span class="pendiente-label">Pendiente</span>
+        </div>`;
+    }
+    const b = band(g);
+    return `
+      <div class="subject-row">
+        <span class="name">${name}</span>
+        <span class="bar-track"><span class="bar-fill ${b}" style="width:${g}%"></span></span>
+        <span class="grade ${b}">${g}</span>
+      </div>`;
+  }).join('');
+
+  const obsHtml = s.o ? `<div class="obs"><b>Observaciones</b>${s.o}</div>` : '';
+
+  detail.innerHTML = `
+    <div class="report-card" id="reportCard">
+      <button class="back-btn" id="backBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Lista
+      </button>
+      <div class="card-top">
+        <div>
+          <div class="card-eyebrow">${meta.full} · ${PERIOD}</div>
+          <div class="card-name">${cap(s.n)}<span class="ap">${cap(s.a)}</span></div>
+        </div>
+        <div class="stamp-wrap">
+          <div class="stamp-ring" style="background: conic-gradient(${ringColor} ${pct}%, rgba(20,40,60,.08) 0);">
+            <div class="stamp-inner">
+              <span class="num">${s.p}</span>
+              <span class="lbl">Promedio</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="status-pill ${st.cls}"><span class="dot"></span>${st.label}</div>
+      <div class="subjects">${subjectsHtml}</div>
+      ${obsHtml}
+      <div class="actions">
+        <button class="btn btn-primary" id="sendBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.4-.6-2.4-1.4-3.3-2.9-.3-.4 0-.5.2-.7.2-.2.4-.5.6-.7.2-.2.2-.4.1-.6-.1-.3-.7-1.7-1-2.3-.2-.5-.4-.4-.6-.4-.7 0-1.3.2-1.7.7-.6.6-1.1 1.6-.1 3.5 1 1.9 2.4 3.7 4.8 4.8 1.7.8 2.4.6 3-.1.5-.5 1.1-1.5.4-2.1l-.4-.6Z"/><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Z" opacity=".25"/></svg>
+          Enviar por WhatsApp
+        </button>
+        <button class="btn btn-ghost" id="copyBtn">Copiar mensaje</button>
+      </div>
+      <p class="hint">Al enviar se abre WhatsApp con el mensaje listo; tú eliges el contacto del estudiante.</p>
+    </div>
+  `;
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    document.body.classList.remove('detail-open');
+  });
+  document.getElementById('sendBtn').addEventListener('click', () => sendWhatsApp(s));
+  document.getElementById('copyBtn').addEventListener('click', () => copyMessage(s));
+}
+
+/* ---------------- mensaje + acciones ---------------- */
+function buildMessage(s){
+  const meta = getActiveMeta();
+  const lines = [];
+  lines.push('📋 *ELIT – Reporte ' + meta.full + '*');
+  lines.push(cap(s.n) + ' ' + cap(s.a));
+  lines.push('');
+  meta.subjects.forEach((name, i) => {
+    const g = s.g[i];
+    lines.push('• ' + name + ': *' + (g === null ? 'Pendiente' : g) + '*');
+  });
+  lines.push('');
+  lines.push('*Promedio general: ' + s.p + '*');
+  if(s.o){ lines.push(''); lines.push('Observaciones: ' + s.o); }
+  return lines.join('\n');
+}
+
+function sendWhatsApp(s){
+  const text = buildMessage(s);
+  const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+}
+
+function copyMessage(s){
+  const text = buildMessage(s);
+  const done = () => showToast('Mensaje copiado');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+function fallbackCopy(text, done){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); done(); }catch(e){ showToast('No se pudo copiar'); }
+  document.body.removeChild(ta);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ---------------- init ---------------- */
+renderJourney();
+renderList();
+renderPlaceholder();
+document.getElementById('searchInput').addEventListener('input', e => renderList(e.target.value));
+</script>
+</body>
+</html>
